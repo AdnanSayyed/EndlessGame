@@ -4,6 +4,8 @@ public class Platform : MonoBehaviour
 {
     public float Length {  get; private set; }
 
+    public string PlatformTag;
+
     private void Awake()
     {
         Length = CalculateLength();
