@@ -6568,7 +6568,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.23333335
+        time: 0.23333333
         value: 0.018335469
         inSlope: 0.5243795
         outSlope: 0.5243795
@@ -26070,7 +26070,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.23333335
+        time: 0.23333333
         value: 0.018335469
         inSlope: 0.5243795
         outSlope: 0.5243795
@@ -38084,4 +38084,11 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0.6333333
+    functionName: SetRunningState
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
