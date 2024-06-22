@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlatformSpawner : MonoBehaviour
@@ -8,8 +9,10 @@ public class PlatformSpawner : MonoBehaviour
     private Transform playerTransform;
     private Vector3 lastBasePlatformPosition;
     private float lastPlatformWidth;
+    private ObjectPooler objectPooler;
 
-    private Vector2 initialSpawnPosition = new Vector3(-5, 0, 0);
+    private Vector3 initialSpawnPosition = new Vector3(-5, 0, 0);
+    private List<Transform> activePlatforms = new List<Transform>();  // List to keep track of active platforms
 
     void Start()
     {
@@ -17,16 +20,34 @@ public class PlatformSpawner : MonoBehaviour
         lastBasePlatformPosition = Vector3.zero;
         lastPlatformWidth = 0f;
 
+        objectPooler = ObjectPooler.Instance;
+
+        // Initial platform spawn to start the game
         SpawnInitialBasePlatforms();
     }
 
     void Update()
     {
+        // Check if a new base platform needs to be spawned
         if (playerTransform.position.x + 10 > lastBasePlatformPosition.x)
         {
             SpawnBasePlatform();
         }
 
+        // Return platforms to the pool if they are off-screen
+        for (int i = activePlatforms.Count - 1; i >= 0; i--)
+        {
+            GameObject platform = activePlatforms[i].gameObject;
+            float platformWidth = platform.GetComponent<Platform>().Length;
+
+
+            if (platform.transform.position.x + platformWidth / 2 < playerTransform.position.x - 15)
+            {
+                Platform platformComponent = platform.GetComponent<Platform>();
+                objectPooler.ReturnToPool(platformComponent.PlatformTag, platform);
+                activePlatforms.RemoveAt(i);
+            }
+        }
     }
 
     void SpawnInitialBasePlatforms()
@@ -39,7 +60,8 @@ public class PlatformSpawner : MonoBehaviour
 
     void SpawnBasePlatform()
     {
-        GameObject prefabToSpawn = basePlatformPrefabs[Random.Range(0, basePlatformPrefabs.Length)].gameObject;
+        Platform platformToSpawn = basePlatformPrefabs[Random.Range(0, basePlatformPrefabs.Length)];
+        GameObject newPlatform = objectPooler.SpawnFromPool(platformToSpawn.PlatformTag, initialSpawnPosition, Quaternion.identity);
 
         Vector3 spawnPosition;
 
@@ -52,11 +74,13 @@ public class PlatformSpawner : MonoBehaviour
             spawnPosition = lastBasePlatformPosition + Vector3.right * (lastPlatformWidth / 2f + basePlatformSpawnInterval);
         }
 
-        GameObject platformInstance = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
-        float platformWidth = platformInstance.GetComponent<Platform>().Length;
+        newPlatform.transform.position = spawnPosition;
+        float platformWidth = newPlatform.GetComponent<Platform>().Length;
 
         lastBasePlatformPosition = spawnPosition + Vector3.right * (platformWidth / 2f);
 
         lastPlatformWidth = platformWidth;
+
+        activePlatforms.Add(newPlatform.transform);
     }
 }
