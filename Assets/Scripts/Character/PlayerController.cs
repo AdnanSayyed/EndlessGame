@@ -30,12 +30,12 @@ public class PlayerController : MonoBehaviour
 
 
 
-    private void FixedUpdate()
+    private void Update()
     {
-        MovePlayer();
 
         if (Input.GetKeyDown(KeyCode.Space) && currentState == PlayerState.Running)
         {
+            Debug.Log("jumping..");
             JumpPlayer();
             currentState = PlayerState.Jumping;
             animator.SetTrigger("isJumping");
@@ -47,6 +47,11 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("isSliding");
 
         }
+    }
+    private void FixedUpdate()
+    {
+        MovePlayer();
+
     }
 
     public void SetRunningState()
