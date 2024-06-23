@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     private float originalHeight;
     private Vector3 originalCenter;
 
-    private enum PlayerState { Running, Jumping, Sliding }
+    private enum PlayerState { Running, Jumping, Sliding, Dead }
     private PlayerState currentState = PlayerState.Running;
 
 
@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
 
+
         if (Input.GetKeyDown(KeyCode.Space) && currentState == PlayerState.Running)
         {
             JumpPlayer();
@@ -47,13 +48,11 @@ public class PlayerController : MonoBehaviour
             StartSlide();
 
         }
-    }
-    private void FixedUpdate()
-    {
+
         MovePlayer();
 
     }
-
+  
     public void SetRunningState()
     {
         currentState = PlayerState.Running;
@@ -69,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void EndSlide()
+    public void EndSlide()
     {
         currentState = PlayerState.Running;
 
@@ -80,6 +79,9 @@ public class PlayerController : MonoBehaviour
 
     public void MovePlayer()
     {
+        if (currentState == PlayerState.Dead)
+            return;
+
         isGrounded = characterController.isGrounded;
         if (isGrounded && velocity.y < 0)
         {
@@ -100,5 +102,34 @@ public class PlayerController : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Debug.Log("Hit to " + hit.gameObject.name);
+        if (hit.gameObject.CompareTag(Constants.CollectableTag))
+        {
+            HandleCollisionWithCollectable(hit.gameObject);
+        }
+
+        if (hit.gameObject.CompareTag(Constants.ObstacleTag))
+        {
+            HandleCollisionWithObstacle();
+        }
+    }
+
+    private void HandleCollisionWithCollectable(GameObject collidedObject)
+    {
+        SpawnableBase spawnable = collidedObject.GetComponent<SpawnableBase>();
+        ObjectPooler.Instance.ReturnToPool(spawnable.SpawnableTag, collidedObject);
+    }
+
+    private void HandleCollisionWithObstacle()
+    {
+        currentState = PlayerState.Dead;
+
+        animator.SetTrigger("isDead");
+        // Stop all movement
+        velocity = Vector3.zero;
     }
 }

@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnableTag: Obstacle_02
-  SpawnYOffset: 2
+  SpawnYOffset: 2.5
 --- !u!114 &-5938548184707685136
 MonoBehaviour:
   m_ObjectHideFlags: 0
