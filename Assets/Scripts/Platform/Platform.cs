@@ -1,10 +1,9 @@
 using UnityEngine;
 
-public class Platform : MonoBehaviour
+public class Platform : SpawnableBase
 {
     public float Length {  get; private set; }
 
-    public string PlatformTag;
 
     private void Awake()
     {
@@ -16,7 +15,8 @@ public class Platform : MonoBehaviour
     private float CalculateLength()
     {
         float width = 0f;
-        foreach (Renderer childRenderer in GetComponentsInChildren<Renderer>())
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer childRenderer in renderers)
         {
             width += childRenderer.bounds.size.x;
         }
