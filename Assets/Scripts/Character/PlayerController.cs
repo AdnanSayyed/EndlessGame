@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
-
     [SerializeField]
     private float moveSpeed = 3f;
     [SerializeField]
@@ -27,8 +25,6 @@ public class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
     }
-
-
 
     private void Update()
     {
