@@ -15,6 +15,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
 
+    private float originalHeight;
+    private Vector3 originalCenter;
+
     private enum PlayerState { Running, Jumping, Sliding }
     private PlayerState currentState = PlayerState.Running;
 
@@ -24,6 +27,9 @@ public class PlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+
+        originalHeight = characterController.height;
+        originalCenter = characterController.center;
     }
 
     private void Update()
@@ -31,7 +37,6 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && currentState == PlayerState.Running)
         {
-            Debug.Log("jumping..");
             JumpPlayer();
             currentState = PlayerState.Jumping;
             animator.SetTrigger("isJumping");
@@ -39,8 +44,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.S) && currentState == PlayerState.Running)
         {
-            currentState = PlayerState.Sliding;
-            animator.SetTrigger("isSliding");
+            StartSlide();
 
         }
     }
@@ -53,6 +57,24 @@ public class PlayerController : MonoBehaviour
     public void SetRunningState()
     {
         currentState = PlayerState.Running;
+    }
+
+    private void StartSlide()
+    {
+        currentState = PlayerState.Sliding;
+        animator.SetTrigger("isSliding");
+
+        characterController.height = originalHeight / 3;
+        characterController.center = new Vector3(originalCenter.x, originalCenter.y / 3, originalCenter.z);
+
+    }
+
+    private void EndSlide()
+    {
+        currentState = PlayerState.Running;
+
+        characterController.height = originalHeight;
+        characterController.center = originalCenter;
     }
 
 
