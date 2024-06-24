@@ -1,69 +1,75 @@
+using EndlessGame.Service;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPooler : MonoBehaviour
+namespace EndlessGame.ObjectPool
 {
-    [System.Serializable]
-    public class Pool
+    public class ObjectPooler : MonoBehaviour, IObjectPooler
     {
-        public string tag;
-        public GameObject prefab;
-        public int size;
-        public Transform parent; 
-    }
-
-    public List<Pool> pools;
-    private Dictionary<string, Queue<GameObject>> poolDictionary;
-    public static ObjectPooler Instance;
-
-    void Awake()
-    {
-        Instance = this;
-
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
-
-        foreach (Pool pool in pools)
+        [System.Serializable]
+        public class Pool
         {
-            Queue<GameObject> objectPool = new Queue<GameObject>();
+            public string tag;
+            public GameObject prefab;
+            public int size;
+        }
 
-            for (int i = 0; i < pool.size; i++)
+        public List<Pool> pools;
+        private Dictionary<string, Queue<GameObject>> poolDictionary;
+        public static ObjectPooler Instance;
+
+        void Awake()
+        {
+            Instance = this;
+
+            poolDictionary = new Dictionary<string, Queue<GameObject>>();
+
+            foreach (Pool pool in pools)
             {
-                GameObject obj = Instantiate(pool.prefab, pool.parent); 
-                obj.SetActive(false);
-                objectPool.Enqueue(obj);
+                Queue<GameObject> objectPool = new Queue<GameObject>();
+
+                for (int i = 0; i < pool.size; i++)
+                {
+                    GameObject obj = Instantiate(pool.prefab, transform);
+                    obj.SetActive(false);
+                    objectPool.Enqueue(obj);
+                }
+
+                poolDictionary.Add(pool.tag, objectPool);
             }
 
-            poolDictionary.Add(pool.tag, objectPool);
+            ServiceLocator.RegisterService<IObjectPooler>(this);
         }
-    }
 
-    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
-    {
-        if (!poolDictionary.ContainsKey(tag))
+        public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
         {
-            Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
-            return null;
+            if (!poolDictionary.ContainsKey(tag))
+            {
+                Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
+                return null;
+            }
+
+            GameObject objectToSpawn = poolDictionary[tag].Dequeue();
+            objectToSpawn.SetActive(true);
+            objectToSpawn.transform.position = position;
+            objectToSpawn.transform.rotation = rotation;
+
+            poolDictionary[tag].Enqueue(objectToSpawn);
+
+            return objectToSpawn;
         }
 
-        GameObject objectToSpawn = poolDictionary[tag].Dequeue();
-        objectToSpawn.SetActive(true);
-        objectToSpawn.transform.position = position;
-        objectToSpawn.transform.rotation = rotation;
-
-        poolDictionary[tag].Enqueue(objectToSpawn);
-
-        return objectToSpawn;
-    }
-
-    public void ReturnToPool(string tag, GameObject objectToReturn)
-    {
-        if (!poolDictionary.ContainsKey(tag))
+        public void ReturnToPool(string tag, GameObject objectToReturn)
         {
-            Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
-            return;
-        }
+            if (!poolDictionary.ContainsKey(tag))
+            {
+                Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
+                return;
+            }
 
-        objectToReturn.SetActive(false); 
-        poolDictionary[tag].Enqueue(objectToReturn);
+            objectToReturn.SetActive(false);
+            poolDictionary[tag].Enqueue(objectToReturn);
+        }
     }
+
 }

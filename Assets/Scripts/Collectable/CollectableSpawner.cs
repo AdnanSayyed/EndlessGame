@@ -1,35 +1,35 @@
+using EndlessGame.ObjectPool;
+using EndlessGame.Spawnable;
 using UnityEngine;
 
-public class CollectableSpawner : SpawnerBase
+namespace EndlessGame.Spawner
 {
-    [SerializeField] float collectableSpawnChance = 0.5f; 
-    [SerializeField] float minCollectableDistance = 3f; 
-
-    public override void Spawn(GameObject platform, ObjectPooler objectPooler, ref float lastSpawnX)
+    public class CollectableSpawner : SpawnerBase, ICollectableSpawner
     {
-        float platformX = platform.transform.position.x;
-        float platformWidth = platform.GetComponent<Platform>().Length;
+        [SerializeField] float collectableSpawnChance = 0.5f;
+        [SerializeField] float minCollectableDistance = 3f;
 
-        if (Random.value < collectableSpawnChance && platformX - lastSpawnX >= minCollectableDistance)
+        public override void Spawn(GameObject platform, IObjectPooler objectPooler, ref float lastSpawnX)
         {
-            Collectable collectableToSpawn = (Collectable)allPrefabs[Random.Range(0, allPrefabs.Length)];
-            float yOffset = collectableToSpawn.SpawnYOffset;
+            float platformX = platform.transform.position.x;
+            float platformWidth = platform.GetComponent<Platform>().Length;
 
-            Vector3 collectablePosition = new Vector3(
-                platform.transform.position.x,
-                platform.transform.position.y + yOffset,
-                platform.transform.position.z
-            );
-            GameObject collectable = objectPooler.SpawnFromPool(collectableToSpawn.SpawnableTag, collectablePosition, Quaternion.identity);
+            if (Random.value < collectableSpawnChance && platformX - lastSpawnX >= minCollectableDistance)
+            {
+                Collectable collectableToSpawn = (Collectable)allPrefabs[Random.Range(0, allPrefabs.Length)];
+                float yOffset = collectableToSpawn.SpawnYOffset;
 
-            spawnedObjects.Add(collectable.GetComponent<SpawnableBase>());
+                Vector3 collectablePosition = new Vector3(
+                    platform.transform.position.x,
+                    platform.transform.position.y + yOffset,
+                    platform.transform.position.z
+                );
+                GameObject collectable = objectPooler.SpawnFromPool(collectableToSpawn.SpawnableTag, collectablePosition, Quaternion.identity);
 
-            lastSpawnX = platformX;
+                spawnedObjects.Add(collectable.GetComponent<SpawnableBase>());
+
+                lastSpawnX = platformX;
+            }
         }
-    }
-
-    public override void ReturnToPool(ObjectPooler objectPooler)
-    {
-        base.ReturnToPool(objectPooler);
     }
 }

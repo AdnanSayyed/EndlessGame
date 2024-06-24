@@ -1,49 +1,48 @@
+using EndlessGame.ObjectPool;
+using EndlessGame.Spawnable;
 using UnityEngine;
 
-public class ObstacleSpawner : SpawnerBase
+namespace EndlessGame.Spawner
 {
-    [SerializeField] float obstacleSpawnChance = 0.3f;
-    [SerializeField] float minObstacleDistance = 5f;
-    [SerializeField] float spawnDelay = 5f;
-
-    private float startTime;
-
-    void Start()
+    public class ObstacleSpawner : SpawnerBase, IObstacleSpawner
     {
-        startTime = Time.time;
-    }
+        [SerializeField] float obstacleSpawnChance = 0.3f;
+        [SerializeField] float minObstacleDistance = 5f;
+        [SerializeField] float spawnDelay = 5f;
 
-    public override void Spawn(GameObject platform, ObjectPooler objectPooler, ref float lastSpawnX)
-    {
-        // Check if enough time has passed to start spawning obstacles
-        if (Time.time - startTime < spawnDelay)
+        private float startTime;
+
+        void Start()
         {
-            return;
+            startTime = Time.time;
         }
 
-        float platformX = platform.transform.position.x;
-        float platformWidth = platform.GetComponent<Platform>().Length;
-
-        if (Random.value < obstacleSpawnChance && platformX - lastSpawnX >= minObstacleDistance)
+        public override void Spawn(GameObject platform, IObjectPooler objectPooler, ref float lastSpawnX)
         {
-            Obstacle obstacleToSpawn = (Obstacle)allPrefabs[Random.Range(0, allPrefabs.Length)];
-            float yOffset = obstacleToSpawn.SpawnYOffset;
+            if (Time.time - startTime < spawnDelay)
+            {
+                return;
+            }
 
-            Vector3 obstaclePosition = new Vector3(
-                platform.transform.position.x,
-                platform.transform.position.y + yOffset,
-                platform.transform.position.z
-            ); 
-            GameObject obstacle = objectPooler.SpawnFromPool(obstacleToSpawn.SpawnableTag, obstaclePosition, Quaternion.identity);
+            float platformX = platform.transform.position.x;
+            float platformWidth = platform.GetComponent<Platform>().Length;
 
-            spawnedObjects.Add(obstacle.GetComponent<SpawnableBase>());
+            if (Random.value < obstacleSpawnChance && platformX - lastSpawnX >= minObstacleDistance)
+            {
+                Obstacle obstacleToSpawn = (Obstacle)allPrefabs[Random.Range(0, allPrefabs.Length)];
+                float yOffset = obstacleToSpawn.SpawnYOffset;
 
-            lastSpawnX = platformX; 
+                Vector3 obstaclePosition = new Vector3(
+                    platform.transform.position.x,
+                    platform.transform.position.y + yOffset,
+                    platform.transform.position.z
+                );
+                GameObject obstacle = objectPooler.SpawnFromPool(obstacleToSpawn.SpawnableTag, obstaclePosition, Quaternion.identity);
+
+                spawnedObjects.Add(obstacle.GetComponent<SpawnableBase>());
+
+                lastSpawnX = platformX;
+            }
         }
-    }
-
-    public override void ReturnToPool(ObjectPooler objectPooler)
-    {
-        base.ReturnToPool(objectPooler);
     }
 }

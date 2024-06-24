@@ -1,11 +1,14 @@
 using UnityEngine;
 
-public class RotateObject : MonoBehaviour
+namespace EndlessGame.Common
 {
-    public float rotationSpeed = 90f;
-
-    void Update()
+    public class RotateObject : MonoBehaviour
     {
-        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
+        public float rotationSpeed = 90f;
+
+        void Update()
+        {
+            transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
+        }
     }
 }
