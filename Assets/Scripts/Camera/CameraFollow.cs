@@ -1,15 +1,26 @@
+using EndlessGame.Player;
+using EndlessGame.Service;
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
+namespace EndlessGame.Camera
 {
-    public Transform player;
-    public float smoothSpeed = 0.125f;
-    public Vector3 offset;
-
-    void LateUpdate()
+    public class CameraFollow : MonoBehaviour
     {
-        Vector3 targetPosition = player.position + offset;
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, targetPosition, smoothSpeed);
-        transform.position = smoothedPosition;
+        [SerializeField] float smoothSpeed = 0.125f;
+        [SerializeField] Vector3 offset;
+
+        private Transform player;
+
+        private void Start()
+        {
+            player = ServiceLocator.GetService<IPlayerController>().GetTransform();
+        }
+
+        void LateUpdate()
+        {
+            Vector3 targetPosition = player.position + offset;
+            Vector3 smoothedPosition = Vector3.Lerp(transform.position, targetPosition, smoothSpeed);
+            transform.position = smoothedPosition;
+        }
     }
 }

@@ -1,5 +1,9 @@
-﻿public class Obstacle : SpawnableBase
+﻿
+namespace EndlessGame.Spawnable
 {
-    
-    public float SpawnYOffset;
+    public class Obstacle : SpawnableBase
+    {
+
+        public float SpawnYOffset;
+    }
 }

@@ -1,25 +1,27 @@
 using UnityEngine;
 
-public class Platform : SpawnableBase
+namespace EndlessGame.Spawnable
 {
-    public float Length {  get; private set; }
-
-
-    private void Awake()
+    public class Platform : SpawnableBase
     {
-        Length = CalculateLength();
+        public float Length { get; private set; }
 
-    }
-   
-
-    private float CalculateLength()
-    {
-        float width = 0f;
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-        foreach (Renderer childRenderer in renderers)
+        private void Awake()
         {
-            width += childRenderer.bounds.size.x;
+            Length = CalculateLength();
+
         }
-        return width;
+
+        private float CalculateLength()
+        {
+            float width = 0f;
+            Renderer[] renderers = GetComponentsInChildren<Renderer>();
+            foreach (Renderer childRenderer in renderers)
+            {
+                width += childRenderer.bounds.size.x;
+            }
+            return width;
+        }
     }
+
 }
