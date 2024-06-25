@@ -2,6 +2,7 @@ using UnityEngine;
 using EndlessGame.ObjectPool;
 using EndlessGame.Service;
 using EndlessGame.Player;
+using EndlessGame.Spawnable;
 
 namespace EndlessGame.Spawner
 {
@@ -24,7 +25,6 @@ namespace EndlessGame.Spawner
 
             playerTransform = ServiceLocator.GetService<IPlayerController>().GetTransform();
 
-            platformSpawner.Initialize();
         }
 
         public void UpdateSpawner()
@@ -35,7 +35,7 @@ namespace EndlessGame.Spawner
 
         private void UpdateObstaclesAndCollectables()
         {
-            foreach (Transform platform in platformSpawner.GetActivePlatforms())
+            foreach (var platform in platformSpawner.GetActivePlatforms())
             {
                 obstacleSpawner.Spawn(platform.gameObject, objectPooler, ref lastSpawnX);
                 collectableSpawner.Spawn(platform.gameObject, objectPooler, ref lastSpawnX);

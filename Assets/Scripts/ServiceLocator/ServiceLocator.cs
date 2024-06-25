@@ -26,6 +26,11 @@ namespace EndlessGame.Service
             throw new Exception($"Service of type {type} not registered.");
         }
 
+        public static bool IsServiceRegistered<T>()
+        {
+            return services.ContainsKey(typeof(T));
+        }
+
         public static void UnregisterService<T>()
         {
             var type = typeof(T);

@@ -3,6 +3,7 @@ using EndlessGame.Player;
 using EndlessGame.Service;
 using EndlessGame.Spawner;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace EndlessGame.Spawnable
@@ -16,7 +17,6 @@ namespace EndlessGame.Spawnable
         private float lastPlatformWidth;
         private IObjectPooler objectPooler;
         private Vector3 initialSpawnPosition = new Vector3(-5, 0, 0);
-        private List<Transform> activePlatforms = new List<Transform>();
 
         public void Initialize()
         {
@@ -36,16 +36,17 @@ namespace EndlessGame.Spawnable
                 SpawnPlatform();
             }
 
-            for (int i = activePlatforms.Count - 1; i >= 0; i--)
+            for (int i = spawnedObjects.Count - 1; i >= 0; i--)
             {
-                GameObject platform = activePlatforms[i].gameObject;
+                GameObject platform = spawnedObjects[i].gameObject;
                 float platformWidth = platform.GetComponent<Platform>().Length;
 
                 if (platform.transform.position.x + platformWidth / 2 < playerTransform.position.x - 15)
                 {
                     Platform platformComponent = platform.GetComponent<Platform>();
                     objectPooler.ReturnToPool(platformComponent.SpawnableTag, platform);
-                    activePlatforms.RemoveAt(i);
+                    spawnedObjects.RemoveAt(i);
+                    Debug.Log("REMOVING PLATFORM " + platformComponent.gameObject.name);
                 }
             }
         }
@@ -72,7 +73,6 @@ namespace EndlessGame.Spawnable
             lastBasePlatformPosition = spawnPosition + Vector3.right * (platformWidth / 2f);
             lastPlatformWidth = platformWidth;
 
-            activePlatforms.Add(newPlatform.transform);
 
             lastSpawnX = newPlatform.transform.position.x;
             spawnedObjects.Add(newPlatform.GetComponent<SpawnableBase>());
@@ -80,6 +80,7 @@ namespace EndlessGame.Spawnable
 
         private void SpawnInitialBasePlatforms()
         {
+            Debug.Log("spawning initial platforms");
             for (int i = 0; i < 10; i++)
             {
                 SpawnPlatform();
@@ -92,10 +93,17 @@ namespace EndlessGame.Spawnable
             Spawn(gameObject, objectPooler, ref temp);
         }
 
-        public List<Transform> GetActivePlatforms()
+        public List<SpawnableBase> GetActivePlatforms()
         {
-            return activePlatforms;
+            return spawnedObjects;
+        }
+
+        public override void ResetService(IObjectPooler objectPooler)
+        {
+            base.ResetService(objectPooler);
+            lastBasePlatformPosition = Vector3.zero;
+            lastPlatformWidth = 0f;
+            SpawnInitialBasePlatforms();
         }
     }
-
 }

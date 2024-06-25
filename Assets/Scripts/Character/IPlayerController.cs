@@ -9,5 +9,7 @@ namespace EndlessGame.Player
         void EndSlide();
 
         UnityEngine.Transform GetTransform();
+
+        void ResetService();
     }
 }

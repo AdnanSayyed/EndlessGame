@@ -34,5 +34,11 @@ namespace EndlessGame.Spawner
                 }
             }
         }
+
+        public virtual void ResetService(IObjectPooler objectPooler)
+        {
+            ReturnToPool(objectPooler);
+        }
+
     }
 }

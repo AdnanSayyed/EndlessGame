@@ -44,5 +44,11 @@ namespace EndlessGame.Spawner
                 lastSpawnX = platformX;
             }
         }
+
+        public override void ResetService(IObjectPooler objectPooler)
+        {
+            base.ResetService(objectPooler);
+        }
+
     }
 }
