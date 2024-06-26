@@ -5,6 +5,8 @@ using EndlessGame.Spawner;
 using EndlessGame.UI;
 using EndlessGame.Camera;
 using UnityEngine;
+using EndlessGame.Powerup;
+using EndlessGame.Score;
 
 namespace EndlessGame.Manager
 {
@@ -23,6 +25,7 @@ namespace EndlessGame.Manager
 
         private bool isGameRunning = false;
 
+        public bool IsGameRunning => isGameRunning;
         private void Awake()
         {
             if (Instance == null)
@@ -50,6 +53,18 @@ namespace EndlessGame.Manager
             {
                 var inputService = new InputService();
                 ServiceLocator.RegisterService<IInputService>(inputService);
+            }
+
+            if (!ServiceLocator.IsServiceRegistered<IScoreService>())
+            {
+                var scoreManager = new ScoreService(); // Create a new instance of ScoreManager
+                ServiceLocator.RegisterService<IScoreService>(scoreManager);
+            }
+
+            if (!ServiceLocator.IsServiceRegistered<IPowerUpService>())
+            {
+                var powerUpService = new PowerUpService();
+                ServiceLocator.RegisterService<IPowerUpService>(powerUpService);
             }
 
             if (!ServiceLocator.IsServiceRegistered<IObjectPooler>())

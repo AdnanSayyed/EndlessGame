@@ -4,6 +4,9 @@ using UnityEngine;
 using EndlessGame.Service;
 using EndlessGame.Constant;
 using EndlessGame.Manager;
+using EndlessGame.Powerup;
+using System;
+using EndlessGame.Score;
 
 namespace EndlessGame.Player
 {
@@ -30,15 +33,24 @@ namespace EndlessGame.Player
 
 
         private IInputService inputService;
+        private IPowerUpService powerUpService;
+        private IScoreService scoreManager;
 
         private Vector3 spawnPos;
+        private bool isInvincible = false;
+        private bool isJumpBoostActive;
 
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
 
-            spawnPos = transform.position; 
+            spawnPos = transform.position;
+
+            powerUpService = ServiceLocator.GetService<IPowerUpService>();
+            scoreManager = ServiceLocator.GetService<IScoreService>();
+
+
         }
 
         void Start()
@@ -65,6 +77,14 @@ namespace EndlessGame.Player
             }
 
             MovePlayer();
+
+            powerUpService.Update(Time.deltaTime);
+
+
+            float distanceTraveled = transform.position.x - spawnPos.x;
+
+            // Adjusting the score increment based on scoreFactor
+            scoreManager.SetScore((int)distanceTraveled);
         }
 
         public void SetRunningState()
@@ -115,7 +135,8 @@ namespace EndlessGame.Player
         {
             if (isGrounded)
             {
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                float effectiveJumpHeight = isJumpBoostActive ? jumpHeight * 2f : jumpHeight;
+                velocity.y = Mathf.Sqrt(effectiveJumpHeight * -2f * gravity);
             }
         }
 
@@ -126,9 +147,12 @@ namespace EndlessGame.Player
                 HandleCollisionWithCollectable(hit.gameObject);
             }
 
-            if (hit.gameObject.CompareTag(Constants.ObstacleTag))
+            if (!isInvincible)
             {
-                HandleCollisionWithObstacle();
+                if (hit.gameObject.CompareTag(Constants.ObstacleTag))
+                {
+                    HandleCollisionWithObstacle();
+                }
             }
         }
 
@@ -137,6 +161,15 @@ namespace EndlessGame.Player
             SpawnableBase spawnable = collidedObject.GetComponent<SpawnableBase>();
             var objectPooler = ServiceLocator.GetService<IObjectPooler>();
             objectPooler.ReturnToPool(spawnable.SpawnableTag, collidedObject);
+
+            Collectable collectable = null;
+            collidedObject.TryGetComponent<Collectable>(out collectable);
+
+            if (collectable != null)
+            {
+                powerUpService.ActivatePowerUp(collectable.PowerUpType, this);
+            }
+
         }
 
         private void HandleCollisionWithObstacle()
@@ -151,17 +184,38 @@ namespace EndlessGame.Player
             return transform;
         }
 
+        public void SetInvincible(bool invincible)
+        {
+            isInvincible = invincible;
+
+            gameObject.layer = isInvincible ?
+                LayerMask.NameToLayer(Constants.InvincibleLayer)
+                : LayerMask.NameToLayer(Constants.DefaultLayer);
+        }
+
+        public void SetJumpBoostActive(bool active)
+        {
+            isJumpBoostActive = active;
+        }
+
 
         public void ResetService()
         {
             // Reset player state and position
-            characterController.enabled = false; // Disable to reset position
+            characterController.enabled = false;
             transform.position = spawnPos;
-            characterController.enabled = true; // Re-enable controller
+            characterController.enabled = true;
             currentState = PlayerState.Running;
 
+            //reset animation controller
             animator.Rebind();
             animator.Update(0f);
+
+            // Deactivate all active power-ups
+            foreach (PowerUpType activePowerUp in powerUpService.GetActivePowerUps())
+            {
+                powerUpService.DeactivatePowerUp(activePowerUp);
+            }
         }
     }
 }

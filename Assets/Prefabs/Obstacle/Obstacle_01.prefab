@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1457530184407789714}
   - component: {fileID: 251406287726048471}
   - component: {fileID: 3968898100438904568}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Base7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 2210921251185143018}
   - component: {fileID: 1164655508590414734}
   - component: {fileID: 5787000057560790374}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spike7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 8061478421600606142}
   - component: {fileID: 7524009285505151059}
   - component: {fileID: 4357152670189874073}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Obstacle_01
   m_TagString: Obstacle
   m_Icon: {fileID: 0}

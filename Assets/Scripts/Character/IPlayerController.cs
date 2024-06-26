@@ -11,5 +11,7 @@ namespace EndlessGame.Player
         UnityEngine.Transform GetTransform();
 
         void ResetService();
+        void SetInvincible(bool v);
+        void SetJumpBoostActive(bool v);
     }
 }
