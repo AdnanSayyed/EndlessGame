@@ -5,9 +5,9 @@ namespace EndlessGame.PowerUp
 {
     public class InvincibilityEffect : IPowerUpEffect
     {
-        private PlayerController player;
+        private IPlayerController player;
 
-        public InvincibilityEffect(PlayerController player)
+        public InvincibilityEffect(IPlayerController player)
         {
             this.player = player;
         }

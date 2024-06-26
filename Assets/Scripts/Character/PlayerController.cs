@@ -38,6 +38,7 @@ namespace EndlessGame.Player
 
         private Vector3 spawnPos;
         private bool isInvincible = false;
+        private bool isJumpBoostActive;
 
         private void Awake()
         {
@@ -134,7 +135,8 @@ namespace EndlessGame.Player
         {
             if (isGrounded)
             {
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                float effectiveJumpHeight = isJumpBoostActive ? jumpHeight * 2f : jumpHeight;
+                velocity.y = Mathf.Sqrt(effectiveJumpHeight * -2f * gravity);
             }
         }
 
@@ -189,6 +191,11 @@ namespace EndlessGame.Player
             gameObject.layer = isInvincible ?
                 LayerMask.NameToLayer(Constants.InvincibleLayer)
                 : LayerMask.NameToLayer(Constants.DefaultLayer);
+        }
+
+        public void SetJumpBoostActive(bool active)
+        {
+            isJumpBoostActive = active;
         }
 
 

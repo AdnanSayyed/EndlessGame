@@ -63,6 +63,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnableTag: Collectable_02
   SpawnYOffset: 1
+  PowerUpType: 1
 --- !u!114 &2473886804380797278
 MonoBehaviour:
   m_ObjectHideFlags: 0

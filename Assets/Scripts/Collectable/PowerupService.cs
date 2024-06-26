@@ -12,17 +12,19 @@ namespace EndlessGame.Powerup
         private ConcurrentDictionary<PowerUpType, (IPowerUpEffect, float)> activePowerUps = new ConcurrentDictionary<PowerUpType, (IPowerUpEffect, float)>();
         private Dictionary<PowerUpType, float> powerUpDurations = new Dictionary<PowerUpType, float>()
         {
-            { PowerUpType.Invincibility, 5f }
+            { PowerUpType.Invincibility, 5f },
+            {PowerUpType.JumpBoost,10f }
             // Add more power-up types and durations
         };
 
-        private Dictionary<PowerUpType, Func<PlayerController, IPowerUpEffect>> powerUpCreators;
+        private Dictionary<PowerUpType, Func<IPlayerController, IPowerUpEffect>> powerUpCreators;
 
         public PowerUpService()
         {
-            powerUpCreators = new Dictionary<PowerUpType, Func<PlayerController, IPowerUpEffect>>()
+            powerUpCreators = new Dictionary<PowerUpType, Func<IPlayerController, IPowerUpEffect>>()
             {
-                { PowerUpType.Invincibility, player => new InvincibilityEffect(player) }
+                { PowerUpType.Invincibility, player => new InvincibilityEffect(player) },
+                {PowerUpType.JumpBoost, player=> new JumpBoostEffect(player) }
                 // Add more power-up creators 
             };
         }
@@ -40,7 +42,7 @@ namespace EndlessGame.Powerup
 
                     if (activePowerUps.TryUpdate(powerUp.Key, updatedValue, currentValue))
                     {
-                        break; 
+                        break;
                     }
                 }
 
@@ -105,8 +107,10 @@ namespace EndlessGame.Powerup
 
     public enum PowerUpType
     {
-        Invincibility
+        Invincibility,
+        JumpBoost // Add JumpBoost enum value
     }
+
 
 
     public interface IPowerUpService
@@ -116,6 +120,6 @@ namespace EndlessGame.Powerup
         bool IsPowerUpActive(PowerUpType powerUpType);
         void Update(float deltaTime);
 
-        IEnumerable<PowerUpType> GetActivePowerUps(); 
+        IEnumerable<PowerUpType> GetActivePowerUps();
     }
-}   
+}
