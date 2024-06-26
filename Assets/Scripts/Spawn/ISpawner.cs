@@ -12,6 +12,10 @@ namespace EndlessGame.Spawner
         void Spawn(GameObject platform, IObjectPooler objectPooler, ref float lastSpawnX);
         void ReturnToPool(IObjectPooler objectPooler);
         void CheckAndReturnToPool(IObjectPooler objectPooler, Transform playerTransform, float offset = 15f);
+
+        void ResetService(IObjectPooler objectPooler);
+
+
     }
 
     public interface ISpawner

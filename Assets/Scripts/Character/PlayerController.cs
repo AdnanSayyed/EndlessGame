@@ -3,6 +3,7 @@ using EndlessGame.Spawnable;
 using UnityEngine;
 using EndlessGame.Service;
 using EndlessGame.Constant;
+using EndlessGame.Manager;
 
 namespace EndlessGame.Player
 {
@@ -30,11 +31,18 @@ namespace EndlessGame.Player
 
         private IInputService inputService;
 
-        void Start()
+        private Vector3 spawnPos;
+
+        private void Awake()
         {
             characterController = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
 
+            spawnPos = transform.position; 
+        }
+
+        void Start()
+        {
             originalHeight = characterController.height;
             originalCenter = characterController.center;
 
@@ -78,6 +86,11 @@ namespace EndlessGame.Player
             currentState = PlayerState.Running;
             characterController.height = originalHeight;
             characterController.center = originalCenter;
+        }
+
+        public void DeathAnimFinished()
+        {
+            GameManager.Instance.EndGame();
         }
 
         public void MovePlayer()
@@ -136,6 +149,19 @@ namespace EndlessGame.Player
         public Transform GetTransform()
         {
             return transform;
+        }
+
+
+        public void ResetService()
+        {
+            // Reset player state and position
+            characterController.enabled = false; // Disable to reset position
+            transform.position = spawnPos;
+            characterController.enabled = true; // Re-enable controller
+            currentState = PlayerState.Running;
+
+            animator.Rebind();
+            animator.Update(0f);
         }
     }
 }

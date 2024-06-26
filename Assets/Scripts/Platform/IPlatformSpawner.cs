@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using EndlessGame.Spawnable;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace EndlessGame.Spawner
@@ -7,6 +8,6 @@ namespace EndlessGame.Spawner
     {
         void Initialize();
         void UpdateSpawner();
-        List<Transform> GetActivePlatforms();
+        List<SpawnableBase> GetActivePlatforms();
     }
 }

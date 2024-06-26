@@ -48,24 +48,18 @@ MonoBehaviour:
   - tag: Platform_01
     prefab: {fileID: 7270356158375066651, guid: b72b42fc803168848b2dbcc31ff24482, type: 3}
     size: 10
-    parent: {fileID: 0}
   - tag: Platform_02
     prefab: {fileID: 7772646640831342679, guid: f42a44a49c899cf499ac2e3825f9f3a6, type: 3}
     size: 10
-    parent: {fileID: 0}
   - tag: Obstacle_01
     prefab: {fileID: 7254119520762809604, guid: 07680b9185ea6f84fb70a216121270ef, type: 3}
-    size: 10
-    parent: {fileID: 0}
+    size: 20
   - tag: Obstacle_02
     prefab: {fileID: 1173012677764363227, guid: 63b01f5a620ff6d46a79fe026fe45664, type: 3}
-    size: 10
-    parent: {fileID: 0}
+    size: 20
   - tag: Collectable_01
     prefab: {fileID: 5206398147047929128, guid: 314479fc01c10454b9088b37daeef26a, type: 3}
     size: 10
-    parent: {fileID: 0}
   - tag: Collectable_02
     prefab: {fileID: 5252662728852630407, guid: 2383f8c7914412a41bcc1dc60ac5e589, type: 3}
     size: 10
-    parent: {fileID: 0}

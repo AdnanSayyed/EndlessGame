@@ -70,6 +70,44 @@ namespace EndlessGame.ObjectPool
             objectToReturn.SetActive(false);
             poolDictionary[tag].Enqueue(objectToReturn);
         }
-    }
 
+        public void ResetService()
+        {
+            foreach (var pool in pools)
+            {
+                if (poolDictionary.ContainsKey(pool.tag))
+                {
+                    Queue<GameObject> objectPool = poolDictionary[pool.tag];
+                    List<GameObject> activeObjects = new List<GameObject>();
+
+                    // Dequeue all objects
+                    while (objectPool.Count > 0)
+                    {
+                        GameObject obj = objectPool.Dequeue();
+                        if (obj.activeSelf)
+                        {
+                            activeObjects.Add(obj);
+                        }
+                    }
+
+                    // Deactivate and re-enqueue them
+                    foreach (GameObject obj in activeObjects)
+                    {
+                        obj.SetActive(false);
+                        objectPool.Enqueue(obj);
+                    }
+
+                    // Ensure the pool has the right amount of objects
+                    while (objectPool.Count < pool.size)
+                    {
+                        GameObject obj = Instantiate(pool.prefab, transform);
+                        obj.SetActive(false);
+                        objectPool.Enqueue(obj);
+                    }
+
+                    poolDictionary[pool.tag] = objectPool;
+                }
+            }
+        }
+    }
 }
