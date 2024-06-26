@@ -1,4 +1,5 @@
 using EndlessGame.Manager;
+using EndlessGame.SaveLoad;
 using EndlessGame.Service;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ namespace EndlessGame.UI
     {
         [SerializeField] Button retryButton;
         [SerializeField] Button mainMenuButton;
+        [SerializeField] TMPro.TextMeshProUGUI highScoreText;
 
         private void Awake()
         {
@@ -32,6 +34,9 @@ namespace EndlessGame.UI
         {
             gameObject.SetActive(true);
 
+            var saveLoadService = ServiceLocator.GetService<ISaveLoadService>();
+            SaveData data = saveLoadService.Load();
+            highScoreText.text ="High Score: " + data.HighScore;
         }
 
         public void OnRetryButtonClicked()

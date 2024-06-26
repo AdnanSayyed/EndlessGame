@@ -7,6 +7,7 @@ using EndlessGame.Camera;
 using UnityEngine;
 using EndlessGame.Powerup;
 using EndlessGame.Score;
+using EndlessGame.SaveLoad;
 
 namespace EndlessGame.Manager
 {
@@ -32,7 +33,7 @@ namespace EndlessGame.Manager
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
-                InitializeUIServices();
+                InitializeInitialServices();
             }
             else
             {
@@ -40,8 +41,14 @@ namespace EndlessGame.Manager
             }
         }
 
-        private void InitializeUIServices()
+        private void InitializeInitialServices()
         {
+            if (!ServiceLocator.IsServiceRegistered<ISaveLoadService>())
+            {
+                var saveLoadService = new SaveLoadService();
+                ServiceLocator.RegisterService<ISaveLoadService>(saveLoadService);
+            }
+
             var uiService = Instantiate(uiServicePrefab).GetComponent<IUIService>();
             ServiceLocator.RegisterService<IUIService>(uiService);
             uiService.ShowMainMenu();
@@ -172,6 +179,20 @@ namespace EndlessGame.Manager
         {
             if (isGameRunning)
             {
+                // Save high score
+                var scoreManager = ServiceLocator.GetService<IScoreService>();
+                var saveLoadService = ServiceLocator.GetService<ISaveLoadService>();
+
+                int currentScore = scoreManager.CurrentScore;
+                SaveData data = saveLoadService.Load();
+
+                if (currentScore > data.HighScore)
+                {
+                    data.HighScore = currentScore;
+                    saveLoadService.Save(data);
+                    Debug.Log("New high score saved: " + currentScore);
+                }
+
                 isGameRunning = false;
                 var uiService = ServiceLocator.GetService<IUIService>();
                 uiService.ShowGameOverMenu();

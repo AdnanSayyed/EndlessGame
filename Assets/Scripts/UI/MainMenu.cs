@@ -1,4 +1,5 @@
 using EndlessGame.Manager;
+using EndlessGame.SaveLoad;
 using EndlessGame.Service;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +14,8 @@ namespace EndlessGame.UI
         [SerializeField] Button QuitButton;
 
         [SerializeField] GameObject instructionsPanel;
+
+        [SerializeField] TMPro.TextMeshProUGUI highScoreText;
 
         private void Awake()
         {
@@ -34,6 +37,9 @@ namespace EndlessGame.UI
         {
             gameObject.SetActive(true);
 
+            var saveLoadService = ServiceLocator.GetService<ISaveLoadService>();
+            SaveData data = saveLoadService.Load();
+            highScoreText.text = "High Score: " + data.HighScore;
         }
 
         private void OnInstructionButtonClicked()
