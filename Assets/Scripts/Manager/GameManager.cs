@@ -129,11 +129,13 @@ namespace EndlessGame.Manager
             var collectableSpawner = ServiceLocator.GetService<ICollectableSpawner>();
             var obstacleSpawner = ServiceLocator.GetService<IObstacleSpawner>();
             var playerController = ServiceLocator.GetService<IPlayerController>();
+            var spawner = ServiceLocator.GetService<ISpawner>();
 
             platformSpawner?.ResetService(objectPooler);
             collectableSpawner?.ResetService(objectPooler);
             obstacleSpawner?.ResetService(objectPooler);
             playerController?.ResetService();
+            spawner?.ResetService();
         }
 
 
@@ -196,7 +198,7 @@ namespace EndlessGame.Manager
                 isGameRunning = false;
                 var uiService = ServiceLocator.GetService<IUIService>();
                 uiService.ShowGameOverMenu();
-                ResetGameplayServices();
+                //ResetGameplayServices();
 
                 Debug.Log("Game Ended");
             }

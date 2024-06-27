@@ -44,5 +44,10 @@ namespace EndlessGame.Spawner
             obstacleSpawner.CheckAndReturnToPool(objectPooler, playerTransform);
             collectableSpawner.CheckAndReturnToPool(objectPooler, playerTransform);
         }
+
+        public void ResetService()
+        {
+            lastSpawnX = 0;
+        }
     }
 }

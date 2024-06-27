@@ -22,6 +22,8 @@ namespace EndlessGame.Spawner
     {
         void Initialize();
         void UpdateSpawner();
+
+        void ResetService();
     }
 
 
