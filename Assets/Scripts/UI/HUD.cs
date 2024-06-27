@@ -3,7 +3,10 @@ using UnityEngine.UI;
 using TMPro;
 using EndlessGame.Service;
 using EndlessGame.Manager;
+using EndlessGame.Powerup;
+using System.Collections.Generic;
 using EndlessGame.Score;
+using System.Collections;
 
 namespace EndlessGame.UI
 {
@@ -11,8 +14,12 @@ namespace EndlessGame.UI
     {
         [SerializeField] private TextMeshProUGUI scoreText;
         [SerializeField] private Button pauseButton;
+        [SerializeField] private Transform powerupVisualsContent;
 
         private IScoreService scoreManager;
+        private IPowerUpService powerUpService;
+
+        private Dictionary<PowerUpType, Image> powerUpImages = new Dictionary<PowerUpType, Image>();
 
         private void Awake()
         {
@@ -22,11 +29,21 @@ namespace EndlessGame.UI
         private void Start()
         {
             scoreManager = ServiceLocator.GetService<IScoreService>();
+            powerUpService = ServiceLocator.GetService<IPowerUpService>();
+
             if (scoreManager != null)
             {
-                scoreManager.OnScoreChanged += UpdateScoreText; 
-                UpdateScoreText(scoreManager.CurrentScore); 
+                scoreManager.OnScoreChanged += UpdateScoreText;
+                UpdateScoreText(scoreManager.CurrentScore);
             }
+
+            if (powerUpService != null)
+            {
+                powerUpService.OnPowerUpActivated += HandlePowerUpActivated;
+                powerUpService.OnPowerUpDeactivated += HandlePowerUpDeactivated;
+            }
+
+            InitializePowerUpImages();
         }
 
         private void OnDestroy()
@@ -35,6 +52,55 @@ namespace EndlessGame.UI
             if (scoreManager != null)
             {
                 scoreManager.OnScoreChanged -= UpdateScoreText;
+            }
+
+            if (powerUpService != null)
+            {
+                powerUpService.OnPowerUpActivated -= HandlePowerUpActivated;
+                powerUpService.OnPowerUpDeactivated -= HandlePowerUpDeactivated;
+            }
+        }
+
+        private void InitializePowerUpImages()
+        {
+            foreach (Transform child in powerupVisualsContent)
+            {
+                var image = child.GetComponent<Image>();
+                if (image != null)
+                {
+                    var powerUpType = child.GetComponent<PowerUpTypeIdentifier>().PowerUpType;
+                    powerUpImages[powerUpType] = image;
+                    image.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        private void HandlePowerUpActivated(PowerUpType powerUpType)
+        {
+            if (powerUpImages.TryGetValue(powerUpType, out var image))
+            {
+                image.gameObject.SetActive(true);
+                StartCoroutine(UpdatePowerUpFillAmount(powerUpType, image));
+            }
+        }
+
+        private void HandlePowerUpDeactivated(PowerUpType powerUpType)
+        {
+            if (powerUpImages.TryGetValue(powerUpType, out var image))
+            {
+                image.gameObject.SetActive(false);
+                StopCoroutine(UpdatePowerUpFillAmount(powerUpType, image));
+            }
+        }
+
+        private IEnumerator UpdatePowerUpFillAmount(PowerUpType powerUpType, Image image)
+        {
+            while (powerUpService.IsPowerUpActive(powerUpType))
+            {
+                float remainingTime = powerUpService.GetRemainingDuration(powerUpType);
+                float totalTime = powerUpService.GetPowerUpDuration(powerUpType);
+                image.fillAmount = remainingTime / totalTime;
+                yield return null;
             }
         }
 
