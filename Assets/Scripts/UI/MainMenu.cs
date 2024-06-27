@@ -45,11 +45,13 @@ namespace EndlessGame.UI
         private void OnInstructionButtonClicked()
         {
             instructionsPanel.SetActive(true);
+            highScoreText.gameObject.SetActive(false);
         }
 
         private void OnCloseInstructionButtonClicked()
         {
             instructionsPanel.SetActive(false);
+            highScoreText.gameObject.SetActive(true);
         }
 
         private void OnPlayButtonClicked()
