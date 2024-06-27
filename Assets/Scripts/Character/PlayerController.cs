@@ -48,6 +48,8 @@ namespace EndlessGame.Player
         private bool isJumpBoostActive;
         private bool isJumpCanceled = false;
 
+        private float initialMoveSpeed;
+
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
@@ -57,6 +59,8 @@ namespace EndlessGame.Player
 
             powerUpService = ServiceLocator.GetService<IPowerUpService>();
             scoreManager = ServiceLocator.GetService<IScoreService>();
+
+            initialMoveSpeed = moveSpeed;
         }
 
         void Start()
@@ -71,11 +75,15 @@ namespace EndlessGame.Player
 
         private void FixedUpdate()
         {
-            CheckGroundStatus();
+            if (GameManager.Instance.IsGameRunning)
+                CheckGroundStatus();
         }
 
         private void Update()
         {
+            if (!GameManager.Instance.IsGameRunning)
+                return;
+
             if (inputService.IsJumpPressed() && isGrounded && currentState == PlayerState.Running)
             {
                 JumpPlayer();
@@ -243,6 +251,8 @@ namespace EndlessGame.Player
             transform.position = spawnPos;
             characterController.enabled = true;
             currentState = PlayerState.Running;
+
+            moveSpeed = initialMoveSpeed;
 
             // Reset animation controller
             animator.Rebind();
