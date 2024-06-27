@@ -341,6 +341,10 @@ MonoBehaviour:
   moveSpeed: 3
   jumpHeight: 2
   gravity: -9.81
+  groundCheckDistance: 0.1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &579322013340311546
 GameObject:
   m_ObjectHideFlags: 0

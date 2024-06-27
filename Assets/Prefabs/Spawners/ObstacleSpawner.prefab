@@ -49,4 +49,4 @@ MonoBehaviour:
   - {fileID: -6232031642200734536, guid: 63b01f5a620ff6d46a79fe026fe45664, type: 3}
   obstacleSpawnChance: 0.3
   minObstacleDistance: 3
-  spawnDelay: 3
+  spawnDelay: 4

@@ -18,6 +18,12 @@ namespace EndlessGame.Player
         private float jumpHeight = 1.5f;
         [SerializeField]
         private float gravity = -9.81f;
+        [SerializeField]
+        private float groundCheckDistance = 0.2f;
+        [SerializeField]
+        private LayerMask groundLayer;
+        [SerializeField]
+        private float speedIncrementFactor = 0.001f;
 
         private CharacterController characterController;
         private Animator animator;
@@ -30,7 +36,6 @@ namespace EndlessGame.Player
 
         private enum PlayerState { Running, Jumping, Sliding, Dead }
         private PlayerState currentState = PlayerState.Running;
-
 
         private IInputService inputService;
         private IPowerUpService powerUpService;
@@ -49,8 +54,6 @@ namespace EndlessGame.Player
 
             powerUpService = ServiceLocator.GetService<IPowerUpService>();
             scoreManager = ServiceLocator.GetService<IScoreService>();
-
-
         }
 
         void Start()
@@ -63,9 +66,16 @@ namespace EndlessGame.Player
             inputService = ServiceLocator.GetService<IInputService>();
         }
 
+        private void FixedUpdate()
+        {
+            CheckGroundStatus();
+        }
+
+
         private void Update()
         {
-            if (inputService.IsJumpPressed() && currentState == PlayerState.Running)
+
+            if (inputService.IsJumpPressed() && isGrounded && currentState == PlayerState.Running)
             {
                 JumpPlayer();
                 currentState = PlayerState.Jumping;
@@ -80,11 +90,19 @@ namespace EndlessGame.Player
 
             powerUpService.Update(Time.deltaTime);
 
-
             float distanceTraveled = transform.position.x - spawnPos.x;
+
+            // Adjust the move speed based on the distance traveled
+            moveSpeed += distanceTraveled * speedIncrementFactor * Time.deltaTime;
 
             // Adjusting the score increment based on scoreFactor
             scoreManager.SetScore((int)distanceTraveled);
+        }
+
+        private void CheckGroundStatus()
+        {
+            Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            isGrounded = Physics.CheckSphere(spherePosition, groundCheckDistance, groundLayer, QueryTriggerInteraction.Ignore);
         }
 
         public void SetRunningState()
@@ -118,7 +136,6 @@ namespace EndlessGame.Player
             if (currentState == PlayerState.Dead)
                 return;
 
-            isGrounded = characterController.isGrounded;
             if (isGrounded && velocity.y < 0)
             {
                 velocity.y = 0f;
@@ -137,6 +154,7 @@ namespace EndlessGame.Player
             {
                 float effectiveJumpHeight = isJumpBoostActive ? jumpHeight * 2f : jumpHeight;
                 velocity.y = Mathf.Sqrt(effectiveJumpHeight * -2f * gravity);
+
             }
         }
 
@@ -169,7 +187,6 @@ namespace EndlessGame.Player
             {
                 powerUpService.ActivatePowerUp(collectable.PowerUpType, this);
             }
-
         }
 
         private void HandleCollisionWithObstacle()
@@ -198,7 +215,6 @@ namespace EndlessGame.Player
             isJumpBoostActive = active;
         }
 
-
         public void ResetService()
         {
             // Reset player state and position
@@ -207,7 +223,7 @@ namespace EndlessGame.Player
             characterController.enabled = true;
             currentState = PlayerState.Running;
 
-            //reset animation controller
+            // Reset animation controller
             animator.Rebind();
             animator.Update(0f);
 
