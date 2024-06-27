@@ -345,6 +345,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
+  speedIncrementFactor: 0.001
+  fallMultiplier: 0.2
 --- !u!1 &579322013340311546
 GameObject:
   m_ObjectHideFlags: 0

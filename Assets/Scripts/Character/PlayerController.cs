@@ -24,6 +24,8 @@ namespace EndlessGame.Player
         private LayerMask groundLayer;
         [SerializeField]
         private float speedIncrementFactor = 0.001f;
+        [SerializeField]
+        private float cancelJumpSmoothTime = 0.1f;
 
         private CharacterController characterController;
         private Animator animator;
@@ -44,6 +46,7 @@ namespace EndlessGame.Player
         private Vector3 spawnPos;
         private bool isInvincible = false;
         private bool isJumpBoostActive;
+        private bool isJumpCanceled = false;
 
         private void Awake()
         {
@@ -71,10 +74,8 @@ namespace EndlessGame.Player
             CheckGroundStatus();
         }
 
-
         private void Update()
         {
-
             if (inputService.IsJumpPressed() && isGrounded && currentState == PlayerState.Running)
             {
                 JumpPlayer();
@@ -84,6 +85,10 @@ namespace EndlessGame.Player
             else if (inputService.IsSlidePressed() && currentState == PlayerState.Running)
             {
                 StartSlide();
+            }
+            else if (inputService.IsJumpCancelled() && currentState == PlayerState.Jumping)
+            {
+                CancelJump();
             }
 
             MovePlayer();
@@ -139,12 +144,21 @@ namespace EndlessGame.Player
             if (isGrounded && velocity.y < 0)
             {
                 velocity.y = 0f;
+                isJumpCanceled = false;  // Reset jump cancel when grounded
             }
 
             Vector3 move = transform.forward * moveSpeed * Time.deltaTime;
             characterController.Move(move);
 
-            velocity.y += gravity * Time.deltaTime;
+            if (isJumpCanceled)
+            {
+                // Move the player down quickly and smoothly
+                velocity.y = Mathf.Lerp(velocity.y, gravity, cancelJumpSmoothTime);
+            }
+            else
+            {
+                velocity.y += gravity * Time.deltaTime;
+            }
             characterController.Move(velocity * Time.deltaTime);
         }
 
@@ -154,7 +168,14 @@ namespace EndlessGame.Player
             {
                 float effectiveJumpHeight = isJumpBoostActive ? jumpHeight * 2f : jumpHeight;
                 velocity.y = Mathf.Sqrt(effectiveJumpHeight * -2f * gravity);
+            }
+        }
 
+        public void CancelJump()
+        {
+            if (currentState == PlayerState.Jumping && !isGrounded)
+            {
+                isJumpCanceled = true;
             }
         }
 
