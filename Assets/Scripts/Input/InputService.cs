@@ -5,7 +5,7 @@ namespace EndlessGame.Service
     public class InputService : IInputService
     {
         private KeyCode jumpKey = KeyCode.Space;
-        private KeyCode slideKey = KeyCode.LeftControl;
+        private KeyCode slideKey = KeyCode.S;
         private KeyCode cancelJumpKey = KeyCode.S;
         public bool IsJumpPressed()
         {
