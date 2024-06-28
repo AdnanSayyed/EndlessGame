@@ -1,11 +1,12 @@
 
-Overview
+Overview:
+
 This project is an endless runner game where the player must dodge obstacles to survive. 
 As the player travels further, the speed and score increase. 
 The game features two types of power-ups: Invincibility and Jump Boost. 
 The player can check their high score in the Main Menu and GameOver Menu.
 
-Features
+Features:
 Endless Gameplay: Keep running and dodging obstacles to achieve the highest score.
 Increasing Difficulty: The game speeds up and the score increases with the distance traveled.
 Power-Ups:
@@ -38,3 +39,4 @@ Assets used from :
 https://kumagotio.itch.io/game-pack-1
 
 https://graphscriptdev.itch.io/boxstylish
+Animations : https://www.mixamo.com/
