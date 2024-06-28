@@ -292,8 +292,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -268.9214, y: -140.8634}
+  m_AnchoredPosition: {x: 0, y: -16.17871}
+  m_SizeDelta: {x: -110.4839, y: -82.6852}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6146969460891320703
 CanvasRenderer:
@@ -323,7 +323,53 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'THESE ARE THE GAME INSTRUCTIONS:'
+  m_text: 'Game Instructions
+
+
+    Welcome to the ultimate endless runner challenge!
+    Here''s what you need to know to master the game
+
+
+    Objective:
+
+    Dodge
+    obstacles and survive as long as you can. The further you go, the faster you
+    get, and the higher your score!
+
+
+    Power-Ups:
+
+    1.Invincibility: Pass through
+    obstacles without getting hurt.
+
+    2.Jump Boost: Jump higher to avoid obstacles.
+
+
+    Power-Up
+    Indicator:
+
+    In the top right corner, you''ll see an icon indicating the remaining
+    time for any active power-up.
+
+
+    Controls:
+
+    - Space:Jump
+
+    - S (while
+    in air): Cancel Jump
+
+    - S (while on ground): Slide
+
+
+    Highscore:
+
+    Check
+    your best score in the Main Menu and GameOver Menu. Keep pushing your limits
+    and set new records!
+
+
+    Good luck, and happy running!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -350,13 +396,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 64
+  m_fontSize: 36.15
   m_fontSizeBase: 64
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 16
+  m_fontSizeMax: 110
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
