@@ -54,8 +54,6 @@ namespace EndlessGame.ObjectPool
             objectToSpawn.transform.position = position;
             objectToSpawn.transform.rotation = rotation;
 
-            poolDictionary[tag].Enqueue(objectToSpawn);
-
             return objectToSpawn;
         }
 

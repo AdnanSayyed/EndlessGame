@@ -48,6 +48,7 @@ namespace EndlessGame.Spawner
         public override void ResetService(IObjectPooler objectPooler)
         {
             base.ResetService(objectPooler);
+            startTime = Time.time;
         }
 
     }

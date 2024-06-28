@@ -24,8 +24,9 @@ namespace EndlessGame.Manager
         [SerializeField] private GameObject cameraFollowPrefab;
         [SerializeField] private GameObject uiServicePrefab;
 
-        private bool isGameRunning = false;
+        private ICameraFollow cameraService;
 
+        private bool isGameRunning = false;
         public bool IsGameRunning => isGameRunning;
         private void Awake()
         {
@@ -47,6 +48,11 @@ namespace EndlessGame.Manager
             {
                 var saveLoadService = new SaveLoadService();
                 ServiceLocator.RegisterService<ISaveLoadService>(saveLoadService);
+            }
+            if (!ServiceLocator.IsServiceRegistered<ICameraFollow>())
+            {
+                cameraService = Instantiate(cameraFollowPrefab).GetComponent<ICameraFollow>();
+                ServiceLocator.RegisterService<ICameraFollow>(cameraService);
             }
 
             var uiService = Instantiate(uiServicePrefab).GetComponent<IUIService>();
@@ -112,13 +118,7 @@ namespace EndlessGame.Manager
                 spawner.Initialize();
             }
 
-            if (!ServiceLocator.IsServiceRegistered<ICameraFollow>())
-            {
-                var cameraFollow = Instantiate(cameraFollowPrefab).GetComponent<ICameraFollow>();
-                ServiceLocator.RegisterService<ICameraFollow>(cameraFollow);
-                cameraFollow.Initialize();
-            }
-
+            cameraService.Initialize();
 
         }
 
@@ -129,11 +129,13 @@ namespace EndlessGame.Manager
             var collectableSpawner = ServiceLocator.GetService<ICollectableSpawner>();
             var obstacleSpawner = ServiceLocator.GetService<IObstacleSpawner>();
             var playerController = ServiceLocator.GetService<IPlayerController>();
+            var spawner = ServiceLocator.GetService<ISpawner>();
 
             platformSpawner?.ResetService(objectPooler);
             collectableSpawner?.ResetService(objectPooler);
             obstacleSpawner?.ResetService(objectPooler);
             playerController?.ResetService();
+            spawner?.ResetService();
         }
 
 
@@ -196,7 +198,7 @@ namespace EndlessGame.Manager
                 isGameRunning = false;
                 var uiService = ServiceLocator.GetService<IUIService>();
                 uiService.ShowGameOverMenu();
-                ResetGameplayServices();
+                //ResetGameplayServices();
 
                 Debug.Log("Game Ended");
             }
