@@ -50,6 +50,12 @@ namespace EndlessGame.Player
 
         private float initialMoveSpeed;
 
+        private readonly int isJumpingHash = Animator.StringToHash("isJumping");
+        private readonly int isSlidingHash = Animator.StringToHash("isSliding");
+        private readonly int isGroundedHash = Animator.StringToHash("isGrounded");
+        private readonly int isDeadHash = Animator.StringToHash("isDead");
+        private readonly int velocityYHash = Animator.StringToHash("velocityY");
+
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
@@ -82,7 +88,6 @@ namespace EndlessGame.Player
             if (currentState == PlayerState.Jumping && isGrounded)
             {
                 currentState = PlayerState.Running;
-
             }
         }
 
@@ -95,7 +100,7 @@ namespace EndlessGame.Player
             {
                 JumpPlayer();
                 currentState = PlayerState.Jumping;
-                animator.SetTrigger("isJumping");
+                animator.SetTrigger(isJumpingHash);
             }
             else if (inputService.IsSlidePressed() && currentState == PlayerState.Running)
             {
@@ -118,11 +123,11 @@ namespace EndlessGame.Player
             // Adjusting the score increment based on scoreFactor
             scoreManager.SetScore((int)distanceTraveled);
 
-            animator.SetFloat("velocityY", velocity.y);
+            animator.SetFloat(velocityYHash, velocity.y);
             if (isGrounded)
-                animator.SetTrigger("isGrounded");
+                animator.SetTrigger(isGroundedHash);
             else
-                animator.ResetTrigger("isGrounded");
+                animator.ResetTrigger(isGroundedHash);
         }
 
         private void CheckGroundStatus()
@@ -139,7 +144,7 @@ namespace EndlessGame.Player
         private void StartSlide()
         {
             currentState = PlayerState.Sliding;
-            animator.SetTrigger("isSliding");
+            animator.SetTrigger(isSlidingHash);
 
             characterController.height = originalHeight / 3;
             characterController.center = new Vector3(originalCenter.x, originalCenter.y / 3, originalCenter.z);
@@ -234,7 +239,7 @@ namespace EndlessGame.Player
         private void HandleCollisionWithObstacle()
         {
             currentState = PlayerState.Dead;
-            animator.SetTrigger("isDead");
+            animator.SetTrigger(isDeadHash);
             velocity = Vector3.zero;
         }
 
