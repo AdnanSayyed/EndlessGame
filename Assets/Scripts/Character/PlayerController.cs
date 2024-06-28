@@ -77,6 +77,13 @@ namespace EndlessGame.Player
         {
             if (GameManager.Instance.IsGameRunning)
                 CheckGroundStatus();
+
+            //To set back animation to running after jump fall
+            if (currentState == PlayerState.Jumping && isGrounded)
+            {
+                currentState = PlayerState.Running;
+
+            }
         }
 
         private void Update()
@@ -110,6 +117,12 @@ namespace EndlessGame.Player
 
             // Adjusting the score increment based on scoreFactor
             scoreManager.SetScore((int)distanceTraveled);
+
+            animator.SetFloat("velocityY", velocity.y);
+            if (isGrounded)
+                animator.SetTrigger("isGrounded");
+            else
+                animator.ResetTrigger("isGrounded");
         }
 
         private void CheckGroundStatus()
