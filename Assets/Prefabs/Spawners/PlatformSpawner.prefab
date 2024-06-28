@@ -49,4 +49,4 @@ MonoBehaviour:
   - {fileID: 8881539287605384292, guid: f42a44a49c899cf499ac2e3825f9f3a6, type: 3}
   - {fileID: 5776799859403391279, guid: f0d46b80001b2124589fd2489697bca5, type: 3}
   - {fileID: 8881539287605384292, guid: a6ea0e766aad3bf4ab27e7dd9ca6f889, type: 3}
-  basePlatformSpawnInterval: 0
+  basePlatformSpawnInterval: -0.1
