@@ -84,10 +84,22 @@ namespace EndlessGame.Player
             if (GameManager.Instance.IsGameRunning)
                 CheckGroundStatus();
 
-            //To set back animation to running after jump fall
-            if (currentState == PlayerState.Jumping && isGrounded)
+            if (isGrounded)
             {
-                currentState = PlayerState.Running;
+                if (currentState == PlayerState.Jumping || currentState == PlayerState.Sliding)
+                {
+                    // Transition back to running after landing
+                    SetRunningState();
+                }
+            }
+            else
+            {
+                // While in the air, remain in the jumping state
+                if (currentState != PlayerState.Jumping)
+                {
+                    currentState = PlayerState.Jumping;
+                    animator.SetTrigger(isJumpingHash);
+                }
             }
         }
 
@@ -96,23 +108,9 @@ namespace EndlessGame.Player
             if (!GameManager.Instance.IsGameRunning)
                 return;
 
-            if (inputService.IsJumpPressed() && isGrounded && currentState == PlayerState.Running)
-            {
-                JumpPlayer();
-                currentState = PlayerState.Jumping;
-                animator.SetTrigger(isJumpingHash);
-            }
-            else if (inputService.IsSlidePressed() && currentState == PlayerState.Running)
-            {
-                StartSlide();
-            }
-            else if (inputService.IsJumpCancelled() && currentState == PlayerState.Jumping)
-            {
-                CancelJump();
-            }
+            HandleInput();
 
             MovePlayer();
-
             powerUpService.Update(Time.deltaTime);
 
             float distanceTraveled = transform.position.x - spawnPos.x;
@@ -123,11 +121,38 @@ namespace EndlessGame.Player
             // Adjusting the score increment based on scoreFactor
             scoreManager.SetScore((int)distanceTraveled);
 
+           UpdateAnimatorParameters();
+        }
+        
+        private void UpdateAnimatorParameters()
+        {
             animator.SetFloat(velocityYHash, velocity.y);
+
             if (isGrounded)
-                animator.SetTrigger(isGroundedHash);
+            {
+                animator.SetBool(isGroundedHash, true);
+                animator.ResetTrigger(isJumpingHash);
+            }
             else
-                animator.ResetTrigger(isGroundedHash);
+            {
+                animator.SetBool(isGroundedHash, false);
+            }
+        }
+
+        private void HandleInput()
+        {
+            if (inputService.IsJumpPressed() && isGrounded && currentState == PlayerState.Running)
+            {
+                JumpPlayer();
+            }
+            else if (inputService.IsSlidePressed() && currentState == PlayerState.Running)
+            {
+                StartSlide();
+            }
+            else if (inputService.IsJumpCancelled() && currentState == PlayerState.Jumping)
+            {
+                CancelJump();
+            }
         }
 
         private void CheckGroundStatus()
